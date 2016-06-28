@@ -14,8 +14,6 @@ type
    * @extends Action
   **)
   TB3Runner = class(TB3Action)
-  private
-  protected
   public
     constructor Create; override;
     (**

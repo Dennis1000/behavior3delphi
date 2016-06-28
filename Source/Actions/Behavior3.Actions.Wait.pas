@@ -3,6 +3,7 @@ unit Behavior3.Actions.Wait;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Action, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -35,6 +36,8 @@ type
      * @return {Constant} Always return `b3.SUCCESS`.
      **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 implementation
@@ -64,6 +67,7 @@ begin
   Milliseconds := 0;
 end;
 
+
 procedure TB3Wait.Open(Tick: TB3Tick);
 begin
   Tick.Blackboard.&Set('startTime', TStopWatch.GetTimeStamp, Tick.Tree.Id, Id);
@@ -81,6 +85,12 @@ begin
     Result := Behavior3.Success
   else
     Result := Behavior3.Running;
+end;
+
+procedure TB3Wait.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  Milliseconds := LoadProperty(JsonNode, 'milliseconds', Milliseconds);
 end;
 
 initialization

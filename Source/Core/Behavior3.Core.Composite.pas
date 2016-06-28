@@ -96,7 +96,6 @@ var
   Child: String;
 begin
   inherited;
-  Name := JsonNode.GetValue('name', Name);
   JsonNodes := TJSONArray(TJSONObject(JsonNode).Get('children').JsonValue);
   for JsonNodeObj in JsonNodes do
   begin

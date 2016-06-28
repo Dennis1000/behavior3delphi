@@ -3,6 +3,7 @@ unit Behavior3.Decorators.Repeater;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Decorator, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -35,6 +36,8 @@ type
      * @return {Constant} A state constant.
     **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 
@@ -67,10 +70,9 @@ begin
      * @property {String} parameters
      * @readonly
     **)
-  //parameters: {'maxLoop': -1},
   MaxLoop := -1;
-
 end;
+
 
 procedure TB3Repeater.Open(Tick: TB3Tick);
 begin
@@ -103,6 +105,12 @@ begin
 
   Tick.Blackboard.&Set('i', I, Tick.Tree.Id, Id);
   Result := Status;
+end;
+
+procedure TB3Repeater.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
 end;
 
 initialization

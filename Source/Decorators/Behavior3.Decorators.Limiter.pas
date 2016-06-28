@@ -3,6 +3,7 @@ unit Behavior3.Decorators.Limiter;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Decorator, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -34,6 +35,8 @@ type
      * @return {Constant} A state constant.
     **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 implementation
@@ -65,9 +68,9 @@ begin
      * @property {String} parameters
      * @readonly
     **)
-  Properties.Add('maxLoop', 1);
   MaxLoop := 1;
 end;
+
 
 procedure TB3Limiter.Open(Tick: TB3Tick);
 begin
@@ -97,6 +100,13 @@ begin
   else
     Result := Behavior3.Failure;
 end;
+
+procedure TB3Limiter.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
+end;
+
 
 initialization
   Behavior3NodeTypes.Add(TB3Limiter);

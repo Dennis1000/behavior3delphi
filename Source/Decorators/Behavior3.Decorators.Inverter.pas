@@ -7,8 +7,6 @@ uses
 
 type
   TB3Inverter = class(TB3Decorator)
-  private
-  protected
   public
     constructor Create; override;
     (**
@@ -51,10 +49,10 @@ begin
 
   Status := Child._Execute(Tick);
 
-  if (Status = Behavior3.Success) then
+  if Status = Behavior3.Success then
     Status := Behavior3.Failure
   else
-  if (Status = Behavior3.Failure) then
+  if Status = Behavior3.Failure then
     Status := Behavior3.Success;
 
   Result := Status;

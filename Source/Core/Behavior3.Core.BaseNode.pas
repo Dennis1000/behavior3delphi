@@ -29,6 +29,8 @@ type
    * @class BaseNode
   **)
   TB3BaseNode = class abstract (TObject)
+  protected
+    function LoadProperty<T>(JsonNode: TJSONValue; const Value: String; Default: T): T;
   public
     (**
      * This is the main method to propagate the tick signal to this node. This
@@ -322,6 +324,15 @@ begin
   // execution.
 end;
 
+
+function TB3BaseNode.LoadProperty<T>(JsonNode: TJSONValue; const Value: String; Default: T): T;
+var
+  JsonObj: TJSONObject;
+begin
+  JsonObj := TJSONObject(JsonNode).Get('properties').JsonValue as TJSONObject;
+  if not JsonObj.TryGetValue(Value, Result) then
+    Result := Default;
+end;
 
 procedure TB3BaseNode.Load(JsonNode: TJSONValue);
 begin

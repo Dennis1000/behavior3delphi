@@ -32,5 +32,22 @@ type
 
 implementation
 
+uses
+  // add all node types
+  Behavior3.Actions.Error,
+  Behavior3.Actions.Failer,
+  Behavior3.Actions.Runner,
+  Behavior3.Actions.Succeeder,
+  Behavior3.Actions.Wait,
+  Behavior3.Composites.MemPriority,
+  Behavior3.Composites.MemSequence,
+  Behavior3.Composites.Priority,
+  Behavior3.Composites.Sequence,
+  Behavior3.Decorators.Inverter,
+  Behavior3.Decorators.Limiter,
+  Behavior3.Decorators.MaxTime,
+  Behavior3.Decorators.Repeater,
+  Behavior3.Decorators.RepeatUntilFailure,
+  Behavior3.Decorators.RepeatUntilSuccess;
 
 end.

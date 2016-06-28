@@ -113,7 +113,13 @@ type
     **)
     Debug: TObject;
 
-    FNodes: TObject;
+    (**
+     * A dictionary with nodes. Useful to during loading
+     *
+     * @property {Object} fnodes
+     * @readonly
+    **)
+    FNodes: TObject; // Use Behavior3.Helper for accessing Nodes: TB3BaseNodeDictionary;
 
     (**
      * Initialization method.
@@ -187,9 +193,6 @@ type
      * @return {Constant} The tick signal state.
     **)
     function Tick(Target: TObject; Blackboard: TObject): TB3Status;
-
-
-//    function CreateTick: TB3Tick;
   end;
 
 implementation
@@ -298,7 +301,7 @@ begin
   begin
     // does not close if it is still open in this tick
     Start := 0;
-    for I := 0 to Min(lastOpenNodes.Count, currOpenNodes.Count) - 1 do
+    for I := 0 to Min(LastOpenNodes.Count, CurrOpenNodes.Count) - 1 do
     begin
       Start := I + 1;
       if LastOpenNodes[I] <> CurrOpenNodes[I] then

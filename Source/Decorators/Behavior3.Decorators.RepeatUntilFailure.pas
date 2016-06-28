@@ -3,6 +3,7 @@ unit Behavior3.Decorators.RepeatUntilFailure;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Decorator, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -35,6 +36,8 @@ type
      * @return {Constant} A state constant.
     **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 
@@ -68,9 +71,8 @@ begin
      * @readonly
     **)
   MaxLoop := -1;
-  //parameters: {'maxLoop': -1},
-
 end;
+
 
 procedure TB3RepeatUntilFailure.Open(Tick: TB3Tick);
 begin
@@ -104,6 +106,13 @@ begin
   Tick.Blackboard.&Set('i', I, Tick.Tree.Id, Id);
   Result := Status;
 end;
+
+procedure TB3RepeatUntilFailure.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
+end;
+
 
 initialization
   Behavior3NodeTypes.Add(TB3RepeatUntilFailure);

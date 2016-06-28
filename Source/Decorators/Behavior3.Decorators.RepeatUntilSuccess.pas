@@ -3,6 +3,7 @@ unit Behavior3.Decorators.RepeatUntilSuccess;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Decorator, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -21,6 +22,7 @@ type
   public
     // maxLoop** (*Integer*) Maximum number of repetitions. Default to -1 (infinite)
     MaxLoop: Integer;
+
     constructor Create; override;
     (**
      * Open method.
@@ -35,6 +37,8 @@ type
      * @return {Constant} A state constant.
     **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 
@@ -68,8 +72,6 @@ begin
      * @readonly
     **)
   MaxLoop := -1;
-  //parameters: {'maxLoop': -1},
-
 end;
 
 procedure TB3RepeatUntilSuccess.Open(Tick: TB3Tick);
@@ -104,6 +106,13 @@ begin
   Tick.Blackboard.&Set('i', I, Tick.Tree.Id, Id);
   Result := Status;
 end;
+
+procedure TB3RepeatUntilSuccess.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
+end;
+
 
 initialization
   Behavior3NodeTypes.Add(TB3RepeatUntilSuccess);

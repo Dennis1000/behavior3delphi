@@ -3,6 +3,7 @@ unit Behavior3.Decorators.MaxTime;
 interface
 
 uses
+  System.JSON,
   Behavior3, Behavior3.Core.Decorator, Behavior3.Core.BaseNode, Behavior3.Core.Tick;
 
 type
@@ -35,6 +36,8 @@ type
      * @return {Constant} A state constant.
     **)
     function Tick(Tick: TB3Tick): TB3Status; override;
+
+    procedure Load(JsonNode: TJSONValue); override;
   end;
 
 
@@ -62,14 +65,8 @@ begin
      * @readonly
     **)
   Title := 'Max <maxTime>ms';
-
-   (**
-     * Node parameters.
-     * @property {String} parameters
-     * @readonly
-    **)
-  Properties.Add('maxTime', 0);
 end;
+
 
 procedure TB3MaxTime.Open(Tick: TB3Tick);
 begin
@@ -97,6 +94,13 @@ begin
   else
     Result := Status;
 end;
+
+procedure TB3MaxTime.Load(JsonNode: TJSONValue);
+begin
+  inherited;
+  MaxTime := LoadProperty(JsonNode, 'maxTime', MaxTime);
+end;
+
 
 initialization
   Behavior3NodeTypes.Add(TB3MaxTime);

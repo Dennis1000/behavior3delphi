@@ -14,8 +14,6 @@ type
    * @extends Action
   **)
   TB3Failer = class(TB3Action)
-  private
-  protected
   public
     constructor Create; override;
     (**
