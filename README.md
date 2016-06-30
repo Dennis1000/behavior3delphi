@@ -1,5 +1,5 @@
 # behavior3delphi
-**behavior3delphi** is Behavior3 client library for Delphi (Behavior Trees for Delphi) based on [**behavior3js**](https://github.com/behavior3/behavior3js/).
+**behavior3delphi** is a [**Behavior3**](https://behavior3.com) client library for Delphi (Behavior Trees for Delphi) based on [**behavior3js**](https://github.com/behavior3/behavior3js/).
 
 ## Contents
 
@@ -45,6 +45,7 @@ This library includes the following core structures
 
 ## Building
 
+Either include all units (incl. those found in the `Actions/Composites/Core/Decorators` directories) or install and compile the `Behavior3Delphi.dpk` package (in the `\Package` folder) and set *Link with runtime packages* to *true* in the project options (*Packages -> Runtime Packages*) of your project.
 
 ## Copyright and license
 
