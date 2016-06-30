@@ -40,11 +40,11 @@ interface
   - BaseNode: Exit() changed to Exit_()
   - BaseNode: added load/save via JSON object
   - BaseNode: added a BehaviorTree reference (as Tree: TB3BehaviorTree)
-  - BehaviorTree: added all used nodes as a node dictionary (Nodes: TB3BaseNodeDictionary)
+  - BehaviorTree: added all linked nodes as a node dictionary (Nodes: TB3BaseNodeDictionary)
   - BehaviorTree: removed properties
-  - Node types are either given during the loading the behavior tree or managed globally (in Behavior3.NodeTypes.pas)
+  - Node types are either given during the loading of the behavior tree or managed globally (in Behavior3.NodeTypes.pas)
   - Register your custom node types in the B3NodeTypes dictionary
-  - used Behavior3.Helper.pas to prevent the circular unit reference
+  - used Behavior3.Helper.pas to prevent circular unit reference
 }
 
 uses
