@@ -156,7 +156,7 @@ type
      * @param {Object} data The data structure representing a Behavior Tree.
      * @param {Object} [names] A namespace or dict containing custom nodes.
     **)
-    procedure Load (Data: String; Names: TObject);
+    procedure Load (Data: String; NodeTypes: TObject);
 
     (**
      * This method dump the current BT into a data structure.
@@ -219,7 +219,7 @@ begin
    Result := NIL;
 end;
 
-procedure TB3BehaviorTree.Load(Data: String; Names: TObject);
+procedure TB3BehaviorTree.Load(Data: String; NodeTypes: TObject);
 var
   JsonTree: TJSONObject;
   JsonNodes: TJSONArray;
@@ -245,13 +245,9 @@ begin
 
       NodeName := JsonNode.GetValue('name', '');
       Node := Behavior3NodeTypes.CreateNode(NodeName);
-      try
-        Nodes.Add(Node.Id, Node);
-      finally
-        Node.Free;
-      end;
-      Node.Tree := Self;
       Node.Id := JsonNode.GetValue('id', '');
+      Node.Tree := Self;
+      Nodes.Add(Node.Id, Node);
     end;
 
     // Load and link nodes
@@ -279,11 +275,11 @@ var
   Start, I: Integer;
 begin
   if not Assigned(Blackboard) then
-    raise EParameterMissingException.Create('The blackboard parameter is obligatory and must be an ' +
+    raise EB3ParameterMissingException.Create('The blackboard parameter is obligatory and must be an ' +
       'instance of b3.Blackboard');
 
   if not Assigned(Root) then
-    raise ERootMissingException.Create('Node root not defined');
+    raise EB3RootMissingException.Create('Node root not defined');
 
   //* CREATE A TICK OBJECT */
   Tick := TB3Tick.Create;

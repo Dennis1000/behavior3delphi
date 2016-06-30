@@ -29,9 +29,9 @@ type
   TB3Category = (Composite, Decorator, Action, Condition);
   TB3Status = (Success = 1, Failure, Running, Error);
 
-  EParameterMissingException = class(Exception);
-  ERootMissingException = class(Exception);
-  ENodeclassMissingException = class(Exception);
+  EB3ParameterMissingException = class(Exception);
+  EB3RootMissingException = class(Exception);
+  EB3NodeclassMissingException = class(Exception);
 
 implementation
 
