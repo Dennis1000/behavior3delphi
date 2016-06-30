@@ -4,8 +4,7 @@ interface
 
 uses
   System.Generics.Collections, System.Generics.Defaults, System.JSON,
-  Behavior3, Behavior3.Core.Tick;
-  //Behavior3.Core.BaseNode;
+  Behavior3, Behavior3.Core.Tick, Behavior3.Core.Blackboard;
 
 type
 (**
@@ -192,7 +191,7 @@ type
      * @param {Blackboard} blackboard An instance of blackboard object.
      * @return {Constant} The tick signal state.
     **)
-    function Tick(Target: TObject; Blackboard: TObject): TB3Status;
+    function Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status;
   end;
 
 implementation
@@ -200,7 +199,7 @@ implementation
 { TB3BehaviorTree }
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.Blackboard, Behavior3.Core.BaseNode,
+  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BaseNode,
   System.Math, System.SysUtils;
 
 constructor TB3BehaviorTree.Create;
@@ -226,13 +225,13 @@ var
   JsonNodes: TJSONArray;
   JsonNode: TJSONValue;
   JsonNodeObj: TJSONValue;
-  NodeClass: TB3BaseNodeClass;
   NodeName: String;
   Node: TB3BaseNode;
   NodeId: String;
 begin
   Nodes.Clear;
-  JsonTree := TJSONObject.ParseJSONValue(Data, false) as TJSONObject;
+
+  JsonTree := TJSONObject.ParseJSONValue(Data, False) as TJSONObject;
   try
     Id := JsonTree.GetValue('id', Id);
     Title := JsonTree.GetValue('title', Title);
@@ -245,11 +244,14 @@ begin
       JsonNode := TJSONPair(JSonNodeObj).JsonValue;
 
       NodeName := JsonNode.GetValue('name', '');
-      NodeClass := Behavior3NodeTypes[NodeName];
-      Node := NodeClass.Create;
+      Node := Behavior3NodeTypes.CreateNode(NodeName);
+      try
+        Nodes.Add(Node.Id, Node);
+      finally
+        Node.Free;
+      end;
       Node.Tree := Self;
       Node.Id := JsonNode.GetValue('id', '');
-      Nodes.Add(Node.Id, Node);
     end;
 
     // Load and link nodes
@@ -261,6 +263,7 @@ begin
       Node.Load(JsonNode);
     end;
 
+    // Set root node
     Root := Nodes[JsonTree.GetValue('root', '')];
 
   finally
@@ -268,7 +271,7 @@ begin
   end;
 end;
 
-function TB3BehaviorTree.Tick(Target, Blackboard: TObject): TB3Status;
+function TB3BehaviorTree.Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status;
 var
   Tick: TB3Tick;
   State: TB3Status;
@@ -280,13 +283,13 @@ begin
       'instance of b3.Blackboard');
 
   if not Assigned(Root) then
-    raise ERootMissingException.Create('Node root node defined');
+    raise ERootMissingException.Create('Node root not defined');
 
   //* CREATE A TICK OBJECT */
   Tick := TB3Tick.Create;
   Tick.Debug := Self;
   Tick.Target := Target;
-  Tick.Blackboard := Blackboard as TB3Blackboard;
+  Tick.Blackboard := Blackboard;
   Tick.Tree := Self;
 
   //* TICK NODE */

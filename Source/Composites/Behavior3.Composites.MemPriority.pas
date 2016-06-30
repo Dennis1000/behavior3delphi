@@ -41,7 +41,7 @@ implementation
 { TB3MemPriority }
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper;
+  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3MemPriority.Create;
 begin

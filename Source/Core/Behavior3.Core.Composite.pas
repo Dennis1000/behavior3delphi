@@ -66,7 +66,7 @@ implementation
 { TB3Composite }
 
 uses
-  Behavior3.Helper;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3Composite.Create;
 begin

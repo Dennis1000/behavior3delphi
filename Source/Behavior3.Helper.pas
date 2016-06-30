@@ -8,10 +8,10 @@ uses
 type
   TB3BehaviorTreeHelper = class helper for TB3BehaviorTree
   protected
-    function GetRoot: TB3BaseNode;
-    procedure SetRoot(const Value: TB3BaseNode);
-    procedure SetNodes(const Value: TB3BaseNodeDictionary);
-    function GetNodes: TB3BaseNodeDictionary;
+    function GetRoot: TB3BaseNode; inline;
+    procedure SetRoot(const Value: TB3BaseNode); inline;
+    procedure SetNodes(const Value: TB3BaseNodeDictionary); inline;
+    function GetNodes: TB3BaseNodeDictionary; inline;
   public
     property Root: TB3BaseNode read GetRoot write SetRoot;
     property Nodes: TB3BaseNodeDictionary read GetNodes write SetNodes;
@@ -19,9 +19,9 @@ type
 
   TB3TickHelper = class helper for TB3Tick
   protected
-    function GetTree: TB3BehaviorTree;
-    procedure SetTree(const Value: TB3BehaviorTree);
-    function GetOpenNodes: TB3BaseNodeList;
+    function GetTree: TB3BehaviorTree; inline;
+    procedure SetTree(const Value: TB3BehaviorTree); inline;
+    function GetOpenNodes: TB3BaseNodeList; inline;
   public
     property Tree: TB3BehaviorTree read GetTree write SetTree;
     property _OpenNodes: TB3BaseNodeList read GetOpenNodes;
@@ -33,12 +33,12 @@ implementation
 
 function TB3BehaviorTreeHelper.GetNodes: TB3BaseNodeDictionary;
 begin
-  Result := FNodes as TB3BaseNodeDictionary;
+  Result := TB3BaseNodeDictionary(FNodes);
 end;
 
 function TB3BehaviorTreeHelper.GetRoot: TB3BaseNode;
 begin
-  Result := FRoot as TB3BaseNode;
+  Result := TB3BaseNode(FRoot);
 end;
 
 procedure TB3BehaviorTreeHelper.SetNodes(const Value: TB3BaseNodeDictionary);
@@ -55,12 +55,12 @@ end;
 
 function TB3TickHelper.GetOpenNodes: TB3BaseNodeList;
 begin
-  Result := F_OpenNodes as TB3BaseNodeList;
+  Result := TB3BaseNodeList(F_OpenNodes);
 end;
 
 function TB3TickHelper.GetTree: TB3BehaviorTree;
 begin
-  Result := FTree as TB3BehaviorTree;
+  Result := TB3BehaviorTree(FTree);
 end;
 
 procedure TB3TickHelper.SetTree(const Value: TB3BehaviorTree);

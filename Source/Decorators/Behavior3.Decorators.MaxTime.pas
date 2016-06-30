@@ -47,7 +47,7 @@ implementation
 
 uses
   System.SysUtils, System.Diagnostics, System.TimeSpan,
-  Behavior3.NodeTypes, Behavior3.Helper;
+  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3MaxTime.Create;
 begin

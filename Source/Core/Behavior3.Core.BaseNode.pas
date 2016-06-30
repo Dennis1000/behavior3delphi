@@ -30,7 +30,8 @@ type
   **)
   TB3BaseNode = class abstract (TObject)
   protected
-    function LoadProperty<T>(JsonNode: TJSONValue; const Value: String; Default: T): T;
+    function LoadProperty<T>(JsonNode: TJSONValue; const Key: String; Default: T): T;
+    procedure SaveProperty<T>(JsonNode: TJSONValue; const Key: String; Value: T);
   public
     (**
      * This is the main method to propagate the tick signal to this node. This
@@ -131,16 +132,6 @@ type
     Description: String;
 
     (**
-     * A dictionary (key, value) describing the node properties. Useful for
-     * defining custom variables inside the visual editor.
-     *
-     * @property properties
-     * @type {Object}
-     * @readonly
-    **)
-    Properties: TDictionary<String, TValue>;
-
-    (**
      * Tree reference
      * @property {BehaviorTree} Tree
      * @readonly
@@ -153,7 +144,6 @@ type
      * @constructor
     **)
     constructor Create; overload; virtual;
-    destructor Destroy; override;
 
     (**
      * Enter method, override this to use. It is called every time a node is
@@ -205,11 +195,13 @@ type
     procedure Exit_(Tick: TB3Tick); virtual;
 
     procedure Load(JsonNode: TJSONValue); overload; virtual;
+    procedure Save(JsonObject: TJSONObject); overload; virtual;
   end;
 
   TB3BaseNodeClass = class of TB3BaseNode;
   TB3BaseNodeList = TObjectList<TB3BaseNode>;
   TB3BaseNodeDictionary = TObjectDictionary<String, TB3BaseNode>;
+  TB3BaseNodeDictionaryItem = TPair<String, TB3BaseNode>;
 
 implementation
 
@@ -225,13 +217,6 @@ var
 begin
   CreateGUID(GUID);
   Id := GUID.ToString;
-  Properties := TDictionary<String, TValue>.Create;
-end;
-
-destructor TB3BaseNode.Destroy;
-begin
-  Properties.Free;
-  inherited;
 end;
 
 function TB3BaseNode._Execute(Tick: TB3Tick): TB3Status;
@@ -303,6 +288,7 @@ begin
   // Note: a node will be closed if it returned `b3.RUNNING` in the tick.
 end;
 
+
 function TB3BaseNode.Tick(Tick: TB3Tick): TB3Status;
 begin
   // Tick method, override this to use. This method must contain the real
@@ -325,13 +311,20 @@ begin
 end;
 
 
-function TB3BaseNode.LoadProperty<T>(JsonNode: TJSONValue; const Value: String; Default: T): T;
+function TB3BaseNode.LoadProperty<T>(JsonNode: TJSONValue; const Key: String; Default: T): T;
 var
   JsonObj: TJSONObject;
 begin
   JsonObj := TJSONObject(JsonNode).Get('properties').JsonValue as TJSONObject;
-  if not JsonObj.TryGetValue(Value, Result) then
-    Result := Default;
+  Result := JsonObj.GetValue(Key, Default);
+end;
+
+procedure TB3BaseNode.SaveProperty<T>(JsonNode: TJSONValue; const Key: String; Value: T);
+var
+  JsonObj: TJSONObject;
+begin
+  JsonObj := TJSONObject(JsonNode).Get('properties').JsonValue as TJSONObject;
+//  JsonObj.AddPair(Key, Default);
 end;
 
 procedure TB3BaseNode.Load(JsonNode: TJSONValue);
@@ -341,5 +334,14 @@ begin
   Description := JsonNode.GetValue('description', Description);
   Title := JsonNode.GetValue('title', Title);
 end;
+
+procedure TB3BaseNode.Save(JsonObject: TJSONObject);
+begin
+  JsonObject.AddPair('name', Name);
+  JsonObject.AddPair('id', Id);
+  JsonObject.AddPair('description', Description);
+  JsonObject.AddPair('title', Title);
+end;
+
 
 end.

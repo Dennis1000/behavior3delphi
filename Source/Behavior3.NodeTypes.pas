@@ -10,6 +10,7 @@ type
   TBehavior3NodeTypes = class(TDictionary<String, TB3BaseNodeClass>)
   public
     procedure Add(const Value: TB3BaseNodeClass); overload;
+    function CreateNode(const NodeName: String): TB3BaseNode; virtual;
   end;
 
 var
@@ -19,6 +20,9 @@ implementation
 
 { TBehavior3NodeTypes }
 
+uses
+  Behavior3;
+
 procedure TBehavior3NodeTypes.Add(const Value: TB3BaseNodeClass);
 var
   Instance: TB3BaseNode;
@@ -27,6 +31,16 @@ begin
   Instance := Value.Create;
   Add(Instance.Name, Value);
   Instance.Free;
+end;
+
+function TBehavior3NodeTypes.CreateNode(const NodeName: String): TB3BaseNode;
+var
+  NodeClass: TB3BaseNodeClass;
+begin
+  if not Behavior3NodeTypes.TryGetValue(NodeName, NodeClass) then
+    raise ENodeclassMissingException.CreateFmt('Invalid node class %s', [NodeName]);
+
+  Result := NodeClass.Create;
 end;
 
 initialization

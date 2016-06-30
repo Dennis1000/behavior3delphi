@@ -44,7 +44,7 @@ type
 implementation
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper;
+  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 
 { TB3Repeater }

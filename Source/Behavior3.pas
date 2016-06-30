@@ -7,6 +7,7 @@ interface
 
  B3 => Behavior3 in order to avoid name clash
  BaseNode: as "parameter" is deprecated, it is not included, any reference changed to properties
+ BaseNode: properties completely removed
  Exit() changed to Exit_()
 
  Register Node types
@@ -15,6 +16,7 @@ interface
  Tree Reference in BaseNode
 
  Nodes use Fixed var instead of properties
+
 }
 
 uses
@@ -29,6 +31,7 @@ type
 
   EParameterMissingException = class(Exception);
   ERootMissingException = class(Exception);
+  ENodeclassMissingException = class(Exception);
 
 implementation
 

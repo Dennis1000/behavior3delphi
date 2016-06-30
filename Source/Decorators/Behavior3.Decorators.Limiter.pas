@@ -21,6 +21,7 @@ type
   protected
   public
     MaxLoop: Integer;
+
     constructor Create; override;
     (**
      * Open method.
@@ -44,7 +45,7 @@ implementation
 { TB3Limiter }
 
 uses
-  Behavior3.NodeTypes,Behavior3.Helper;
+  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3Limiter.Create;
 begin
