@@ -1,3 +1,6 @@
+{ behavior3delphi - a Behavior3 client library (Behavior Trees) for Delphi
+  by Dennis D. Spreen <dennis@spreendigital.de>
+  see Behavior3.pas header for full license information }
 unit Behavior3.Composites.MemPriority;
 
 interface
