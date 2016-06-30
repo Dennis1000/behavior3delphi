@@ -1,5 +1,5 @@
 # behavior3delphi
-**behavior3delphi** is a [**Behavior3**](https://behavior3.com) client library for Delphi (Behavior Trees for Delphi) based on [**behavior3js**](https://github.com/behavior3/behavior3js/).
+**behavior3delphi** is a [**Behavior3**](http://behavior3.com) client library for Delphi (Behavior Trees for Delphi) based on [**behavior3js**](https://github.com/behavior3/behavior3js/).
 
 ## Contents
 
