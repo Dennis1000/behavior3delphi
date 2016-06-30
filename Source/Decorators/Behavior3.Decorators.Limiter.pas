@@ -45,7 +45,7 @@ implementation
 { TB3Limiter }
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3Limiter.Create;
 begin
@@ -108,7 +108,4 @@ begin
   MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
 end;
 
-
-initialization
-  Behavior3NodeTypes.Add(TB3Limiter);
 end.

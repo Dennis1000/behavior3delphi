@@ -3,7 +3,7 @@ unit Behavior3.Core.BehaviorTree;
 interface
 
 uses
-  System.Generics.Collections, System.Generics.Defaults, System.JSON,
+  System.Classes, System.Generics.Collections, System.Generics.Defaults, System.JSON,
   Behavior3, Behavior3.Core.Tick, Behavior3.Core.Blackboard;
 
 type
@@ -92,19 +92,10 @@ type
     Description: String;
 
     (**
-     * A dictionary with (key-value) properties. Useful to define custom
-     * variables in the visual editor.
-     *
-     * @property {Object} properties
-     * @readonly
-    **)
-    Properties: TDictionary<String, String>;
-
-    (**
      * The reference to the root node. Must be an instance of `b3.BaseNode`.
      * @property {BaseNode} root
     **)
-    FRoot: TObject; // Use Behavior3.Helper for accessing Root: TB3BaseNode;
+    FRoot: TObject; // Use Behavior3.Helper for accessing as Root: TB3BaseNode;
 
     (**
      * The reference to the debug instance.
@@ -118,7 +109,7 @@ type
      * @property {Object} fnodes
      * @readonly
     **)
-    FNodes: TObject; // Use Behavior3.Helper for accessing Nodes: TB3BaseNodeDictionary;
+    FNodes: TObject; // Use Behavior3.Helper for accessing as Nodes: TB3BaseNodeDictionary;
 
     (**
      * Initialization method.
@@ -156,7 +147,9 @@ type
      * @param {Object} data The data structure representing a Behavior Tree.
      * @param {Object} [names] A namespace or dict containing custom nodes.
     **)
-    procedure Load (Data: String; NodeTypes: TObject);
+    procedure Load (Data: String; NodeTypes: TObject = NIL); overload; virtual;
+    procedure Load (JsonTree: TJSONObject; NodeTypes: TObject = NIL); overload; virtual;
+    procedure Load (Stream: TStream; NodeTypes: TObject = NIL); overload; virtual;
 
     (**
      * This method dump the current BT into a data structure.
@@ -167,7 +160,7 @@ type
      * @method dump
      * @return {Object} A data object representing this tree.
     **)
-    function Dump: TObject;
+    function Dump: TObject; virtual;
 
     (**
      * Propagates the tick signal through the tree, starting from the root.
@@ -191,7 +184,7 @@ type
      * @param {Blackboard} blackboard An instance of blackboard object.
      * @return {Constant} The tick signal state.
     **)
-    function Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status;
+    function Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status; virtual;
   end;
 
 implementation
@@ -219,52 +212,79 @@ begin
    Result := NIL;
 end;
 
-procedure TB3BehaviorTree.Load(Data: String; NodeTypes: TObject);
+procedure TB3BehaviorTree.Load(Data: String; NodeTypes: TObject = NIL);
 var
   JsonTree: TJSONObject;
+begin
+  JsonTree := TJSONObject.ParseJSONValue(Data, False) as TJSONObject;
+  try
+    Load(JsonTree, NodeTypes);
+  finally
+    JsonTree.Free;
+  end;
+end;
+
+procedure TB3BehaviorTree.Load(Stream: TStream; NodeTypes: TObject);
+var
+  StreamReader: TStreamReader;
+  Data: String;
+begin
+  StreamReader := TStreamReader.Create(Stream);
+  Data := StreamReader.ReadToEnd;
+  Load(Data, NodeTypes);
+  StreamReader.Free;
+end;
+
+procedure TB3BehaviorTree.Load(JsonTree: TJSONObject; NodeTypes: TObject);
+var
   JsonNodes: TJSONArray;
   JsonNode: TJSONValue;
   JsonNodeObj: TJSONValue;
   NodeName: String;
   Node: TB3BaseNode;
   NodeId: String;
+  ClassNodeTypes: TB3NodeTypes;
 begin
+  // If not yet assigned NodeTypes (or wrong class type) then create and use global B3NodeTypes
+  if Assigned(NodeTypes) and (NodeTypes.InheritsFrom(TB3NodeTypes)) then
+    ClassNodeTypes := TB3NodeTypes(NodeTypes)
+  else
+  begin
+    if not Assigned(B3NodeTypes) then
+      B3NodeTypes := TB3NodeTypes.Create;
+    ClassNodeTypes := B3NodeTypes;
+  end;
+
   Nodes.Clear;
 
-  JsonTree := TJSONObject.ParseJSONValue(Data, False) as TJSONObject;
-  try
-    Id := JsonTree.GetValue('id', Id);
-    Title := JsonTree.GetValue('title', Title);
-    Description := JsonTree.GetValue('description', Description);
+  Id := JsonTree.GetValue('id', Id);
+  Title := JsonTree.GetValue('title', Title);
+  Description := JsonTree.GetValue('description', Description);
 
-    // Create all nodes
-    JsonNodes := TJSONArray(JsonTree.Get('nodes').JsonValue);
-    for JsonNodeObj in JsonNodes do
-    begin
-      JsonNode := TJSONPair(JSonNodeObj).JsonValue;
+  // Create all nodes
+  JsonNodes := TJSONArray(JsonTree.Get('nodes').JsonValue);
+  for JsonNodeObj in JsonNodes do
+  begin
+    JsonNode := TJSONPair(JSonNodeObj).JsonValue;
 
-      NodeName := JsonNode.GetValue('name', '');
-      Node := Behavior3NodeTypes.CreateNode(NodeName);
-      Node.Id := JsonNode.GetValue('id', '');
-      Node.Tree := Self;
-      Nodes.Add(Node.Id, Node);
-    end;
-
-    // Load and link nodes
-    for JsonNodeObj in JsonNodes do
-    begin
-      JsonNode := TJSONPair(JSonNodeObj).JsonValue;
-      NodeId := JsonNode.GetValue('id', '');
-      Node := Nodes[NodeId];
-      Node.Load(JsonNode);
-    end;
-
-    // Set root node
-    Root := Nodes[JsonTree.GetValue('root', '')];
-
-  finally
-    JsonTree.Free;
+    NodeName := JsonNode.GetValue('name', '');
+    Node := ClassNodeTypes.CreateNode(NodeName);
+    Node.Id := JsonNode.GetValue('id', '');
+    Node.Tree := Self;
+    Nodes.Add(Node.Id, Node);
   end;
+
+  // Load and link nodes
+  for JsonNodeObj in JsonNodes do
+  begin
+    JsonNode := TJSONPair(JSonNodeObj).JsonValue;
+    NodeId := JsonNode.GetValue('id', '');
+    Node := Nodes[NodeId];
+    Node.Load(JsonNode);
+  end;
+
+  // Set root node
+  Root := Nodes[JsonTree.GetValue('root', '')];
 end;
 
 function TB3BehaviorTree.Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status;
@@ -295,7 +315,7 @@ begin
   LastOpenNodes := TB3Blackboard(blackboard).Get('openNodes', Id).AsObject as TB3BaseNodeList;
   CurrOpenNodes := Tick._OpenNodes;
 
-  // process only of there are LastOpenNodes
+  // process only if there are LastOpenNodes
   if Assigned(LastOpenNodes) then
   begin
     // does not close if it is still open in this tick
@@ -322,6 +342,7 @@ begin
 
   Result := State;
 end;
+
 
 end.
 

@@ -22,9 +22,6 @@ implementation
 
 { TB3Inverter }
 
-uses
-  Behavior3.NodeTypes;
-
 constructor TB3Inverter.Create;
 begin
   inherited;
@@ -58,6 +55,4 @@ begin
   Result := Status;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Inverter);
 end.

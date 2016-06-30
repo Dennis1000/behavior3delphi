@@ -29,9 +29,6 @@ implementation
 
 { TB3Failer }
 
-uses
-  Behavior3.NodeTypes;
-
 constructor TB3Failer.Create;
 begin
   inherited;
@@ -48,6 +45,4 @@ begin
   Result := Behavior3.Failure;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Failer);
 end.

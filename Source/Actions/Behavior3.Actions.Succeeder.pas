@@ -29,9 +29,6 @@ implementation
 
 { TB3Succeeder }
 
-uses
-  Behavior3.NodeTypes;
-
 constructor TB3Succeeder.Create;
 begin
   inherited;
@@ -48,6 +45,4 @@ begin
   Result := Behavior3.SUCCESS;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Succeeder);
 end.

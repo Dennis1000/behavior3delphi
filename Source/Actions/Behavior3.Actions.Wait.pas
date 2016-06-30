@@ -46,7 +46,7 @@ implementation
 
 uses
   System.SysUtils, System.Diagnostics, System.TimeSpan,
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3Wait.Create;
 begin
@@ -93,6 +93,4 @@ begin
   Milliseconds := LoadProperty(JsonNode, 'milliseconds', Milliseconds);
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Wait);
 end.

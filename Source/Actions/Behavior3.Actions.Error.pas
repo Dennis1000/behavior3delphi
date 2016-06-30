@@ -29,9 +29,6 @@ implementation
 
 { TB3Error }
 
-uses
-  Behavior3.NodeTypes;
-
 constructor TB3Error.Create;
 begin
   inherited;
@@ -48,6 +45,4 @@ begin
   Result := Behavior3.Error;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Error);
 end.

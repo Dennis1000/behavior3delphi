@@ -44,7 +44,7 @@ type
 implementation
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 
 { TB3Repeater }
@@ -113,7 +113,5 @@ begin
   MaxLoop := LoadProperty(JsonNode, 'maxLoop', MaxLoop);
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Repeater);
 end.
 

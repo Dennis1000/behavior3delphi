@@ -33,7 +33,7 @@ implementation
 
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3MemSequence.Create;
 begin
@@ -75,6 +75,4 @@ begin
   Result := Behavior3.Success;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3MemSequence);
 end.

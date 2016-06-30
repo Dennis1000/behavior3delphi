@@ -35,7 +35,7 @@ implementation
 
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper;
+  Behavior3.Helper;
 
 constructor TB3Sequence.Create;
 begin
@@ -68,7 +68,5 @@ begin
   Result := Behavior3.Success;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Sequence);
 end.
 

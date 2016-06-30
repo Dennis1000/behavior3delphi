@@ -29,9 +29,6 @@ implementation
 
 { TB3Runner }
 
-uses
-  Behavior3.NodeTypes;
-
 constructor TB3Runner.Create;
 begin
   inherited;
@@ -48,6 +45,4 @@ begin
   Result := Behavior3.Running;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Runner);
 end.

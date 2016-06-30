@@ -36,7 +36,7 @@ implementation
 
 
 uses
-  Behavior3.NodeTypes, Behavior3.Helper;
+  Behavior3.Helper;
 
 constructor TB3Priority.Create;
 begin
@@ -69,7 +69,5 @@ begin
   Result := Behavior3.Failure;
 end;
 
-initialization
-  Behavior3NodeTypes.Add(TB3Priority);
 end.
 

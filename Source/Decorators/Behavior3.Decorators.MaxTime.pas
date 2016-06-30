@@ -47,7 +47,7 @@ implementation
 
 uses
   System.SysUtils, System.Diagnostics, System.TimeSpan,
-  Behavior3.NodeTypes, Behavior3.Helper, Behavior3.Core.BehaviorTree;
+  Behavior3.Helper, Behavior3.Core.BehaviorTree;
 
 constructor TB3MaxTime.Create;
 begin
@@ -101,7 +101,4 @@ begin
   MaxTime := LoadProperty(JsonNode, 'maxTime', MaxTime);
 end;
 
-
-initialization
-  Behavior3NodeTypes.Add(TB3MaxTime);
 end.
