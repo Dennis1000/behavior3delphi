@@ -5,12 +5,14 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Behavior3.Project, Behavior3.NodeTypes, Behavior3.Core.Blackboard, Vcl.ExtCtrls;
+  Behavior3.Project, Behavior3.NodeTypes, Behavior3.Core.Blackboard, Vcl.ExtCtrls, Vcl.StdCtrls;
 
 type
   TForm1 = class(TForm)
     Shape1: TShape;
     Timer1: TTimer;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);

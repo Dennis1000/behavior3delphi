@@ -23,6 +23,22 @@ object Form1: TForm1
     Height = 57
     Brush.Color = clBlue
   end
+  object Label1: TLabel
+    Left = 8
+    Top = 27
+    Width = 357
+    Height = 13
+    Caption = 
+      'http://guineashots.com/2014/10/25/implementing-a-behavior-tree-p' +
+      'art-2/'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 8
+    Width = 119
+    Height = 13
+    Caption = 'Example 1-  Jumping Box'
+  end
   object Timer1: TTimer
     Enabled = False
     Interval = 100
