@@ -88,7 +88,7 @@ function TB3NodeTypes.CreateNode(const NodeName: String): TB3BaseNode;
 var
   NodeClass: TB3BaseNodeClass;
 begin
-  if not B3NodeTypes.TryGetValue(NodeName, NodeClass) then
+  if not TryGetValue(NodeName, NodeClass) then
     raise EB3NodeclassMissingException.CreateFmt('Invalid node class %s', [NodeName]);
 
   Result := NodeClass.Create;

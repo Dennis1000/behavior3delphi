@@ -164,7 +164,8 @@ end;
 procedure TB3Tick._CloseNode(Node: TObject);
 begin
   // TODO: call debug here
-  _OpenNodes.Delete(_OpenNodes.Count - 1);
+  _openNodes.Remove(Node as TB3BaseNode);
+//  _OpenNodes.Delete(_OpenNodes.Count - 1);
 end;
 
 procedure TB3Tick._ExitNode(Node: TObject);

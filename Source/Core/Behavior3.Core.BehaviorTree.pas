@@ -95,6 +95,20 @@ type
     Description: String;
 
     (**
+     * Scope of the tree.
+     * @property {String} scope
+     * @readonly
+    **)
+    Scope: String;
+
+    (**
+     * Behavior version of the tree.
+     * @property {String} version
+     * @readonly
+    **)
+    Version: String;
+
+    (**
      * The reference to the root node. Must be an instance of `b3.BaseNode`.
      * @property {BaseNode} root
     **)
@@ -190,6 +204,16 @@ type
     function Tick(Target: TObject; Blackboard: TB3Blackboard): TB3Status; virtual;
   end;
 
+  TB3BehaviorTreeDictionary = class(TObjectDictionary<String, TB3BehaviorTree>)
+  public
+    SelectedTree: TB3BehaviorTree;
+    Scope: String;
+    Version: String;
+    procedure Load (Data: String; NodeTypes: TObject = NIL); overload; virtual;
+    procedure Load (JsonTree: TJSONObject; NodeTypes: TObject = NIL); overload; virtual;
+    procedure Load (Stream: TStream; NodeTypes: TObject = NIL); overload; virtual;
+  end;
+
 implementation
 
 { TB3BehaviorTree }
@@ -233,9 +257,12 @@ var
   Data: String;
 begin
   StreamReader := TStreamReader.Create(Stream);
-  Data := StreamReader.ReadToEnd;
-  Load(Data, NodeTypes);
-  StreamReader.Free;
+  try
+    Data := StreamReader.ReadToEnd;
+    Load(Data, NodeTypes);
+  finally
+    StreamReader.Free;
+  end;
 end;
 
 procedure TB3BehaviorTree.Load(JsonTree: TJSONObject; NodeTypes: TObject);
@@ -260,6 +287,8 @@ begin
 
   Nodes.Clear;
 
+  Version := JsonTree.GetValue('version', Version);
+  Scope := JsonTree.GetValue('scope', Scope);
   Id := JsonTree.GetValue('id', Id);
   Title := JsonTree.GetValue('title', Title);
   Description := JsonTree.GetValue('description', Description);
@@ -343,9 +372,73 @@ begin
   TB3Blackboard(blackboard).&Set('openNodes', CurrOpenNodes, Id);
   TB3Blackboard(blackboard).&Set('nodeCount', Tick._NodeCount, Id);
 
+  // Open nodes are now stored in the blackboard
+  Tick.F_OpenNodes := NIL;
+  Tick.Free;
   Result := State;
 end;
 
 
-end.
+{ TB3BehaviorTreeList }
 
+procedure TB3BehaviorTreeDictionary.Load(Data: String; NodeTypes: TObject);
+var
+  JsonTree: TJSONObject;
+begin
+  JsonTree := TJSONObject.ParseJSONValue(Data, False) as TJSONObject;
+  try
+    Load(JsonTree, NodeTypes);
+  finally
+    JsonTree.Free;
+  end;
+end;
+
+
+procedure TB3BehaviorTreeDictionary.Load(Stream: TStream; NodeTypes: TObject);
+var
+  StreamReader: TStreamReader;
+  Data: String;
+begin
+  StreamReader := TStreamReader.Create(Stream);
+  try
+    Data := StreamReader.ReadToEnd;
+    Load(Data, NodeTypes);
+  finally
+    StreamReader.Free;
+  end;
+end;
+
+procedure TB3BehaviorTreeDictionary.Load(JsonTree: TJSONObject; NodeTypes: TObject);
+var
+  JsonNodes: TJSONArray;
+  JsonNodeObj: TJSONValue;
+  ClassNodeTypes: TB3NodeTypes;
+  Tree: TB3BehaviorTree;
+begin
+  // If not yet assigned NodeTypes (or wrong class type) then create and use global B3NodeTypes
+  if Assigned(NodeTypes) and (NodeTypes.InheritsFrom(TB3NodeTypes)) then
+    ClassNodeTypes := TB3NodeTypes(NodeTypes)
+  else
+  begin
+    if not Assigned(B3NodeTypes) then
+      B3NodeTypes := TB3NodeTypes.Create;
+    ClassNodeTypes := B3NodeTypes;
+  end;
+
+  Version := JsonTree.GetValue('version', Version);
+  Scope := JsonTree.GetValue('scope', Scope);
+
+  // Create all trees
+  JsonNodes := TJSONArray(JsonTree.Get('trees').JsonValue);
+  for JsonNodeObj in JsonNodes do
+  begin
+    Tree := TB3BehaviorTree.Create;
+    Tree.Load(TJSONObject(JsonNodeObj), ClassNodeTypes);
+    Add(Tree.Id, Tree);
+  end;
+
+  // Set selected tree
+  SelectedTree := Items[JsonTree.GetValue('selectedTree', '')];
+end;
+
+end.

@@ -45,6 +45,8 @@ interface
   - Node types are either given during the loading of the behavior tree or managed globally (in Behavior3.NodeTypes.pas)
   - Register your custom node types in the B3NodeTypes dictionary
   - used Behavior3.Helper.pas to prevent circular unit reference
+  - added BehaviorTreeDictionary
+  - added Behavior3.Project with behavior3editor support
 }
 
 uses

@@ -67,7 +67,7 @@ begin
     Status := Children[I]._Execute(Tick);
     if Status <> Behavior3.Success then
     begin
-      if (Status = Behavior3.Running) then
+      if Status = Behavior3.Running then
         Tick.Blackboard.&Set('runningChild', I, Tick.Tree.id, Id);
 
       Result := Status;

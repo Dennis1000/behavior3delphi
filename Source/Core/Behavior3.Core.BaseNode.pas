@@ -230,7 +230,7 @@ begin
   _Enter(Tick);
 
   // OPEN
-  if Tick.Blackboard.Get('isOpen', Tick.Tree.Id, Id).IsEmpty then
+  if not Tick.Blackboard.Get('isOpen', Tick.Tree.Id, Id).AsBoolean then
     _Open(Tick);
 
   // TICK
